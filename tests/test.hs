@@ -171,6 +171,56 @@ main = defaultMain
             -- @-others
             ]
         -- @-node:gcross.20100301111615.1304:Simple integer cases
+        -- @+node:gcross.20100301111615.1311:Simple floating point cases
+        ,testGroup "Simple floating point cases"
+            -- @    @+others
+            -- @+node:gcross.20100301111615.1313:1
+            [testCase "1" $
+                assertEqual
+                    "Is the result correct?"
+                    ([0
+                     ,0
+                     ,0
+                     ,0
+                     ,1
+                     ,1
+                     ,1
+                     ,2
+                     ,0
+                     ,1
+                     ,3
+                     ,4
+                     ,5
+                     ,0
+                     ,0
+                     ]
+                    ,[IntMap.fromList [(3,0),(4,1),(1,2),(0,3),(2,4),(5,5)]
+                     ,IntMap.fromList [(1,0),(0,1)]
+                     ,IntMap.fromList [(0,0)]
+                     ]
+                    )
+                    (runMultipleEpsilonMatchers ([0.1,0,0.2] :: [Float]) . sequence $
+                        [lookupMatchIn 2 0.4
+                        ,lookupMatchIn 0 1.0
+                        ,lookupMatchIn 2 0.5
+                        ,lookupMatchIn 1 0.5
+                        ,lookupMatchIn 0 0.5
+                        ,lookupMatchIn 1 0.4
+                        ,lookupMatchIn 0 0.41
+                        ,lookupMatchIn 0 1.5
+                        ,lookupMatchIn 0 1.05
+                        ,lookupMatchIn 1 0.4
+                        ,lookupMatchIn 0 0
+                        ,lookupMatchIn 0 0.2
+                        ,lookupMatchIn 0 2
+                        ,lookupMatchIn 1 0.5
+                        ,lookupMatchIn 2 0.55
+                        ]
+                    )
+            -- @-node:gcross.20100301111615.1313:1
+            -- @-others
+            ]
+        -- @-node:gcross.20100301111615.1311:Simple floating point cases
         -- @-others
         ]
     -- @-node:gcross.20100301111615.1298:Multiple epsilon matchers
