@@ -24,9 +24,11 @@ main = defaultMain
     -- @+node:gcross.20100228202857.1305:null case
     [testCase "null case" $
         assertEqual
-            "Is the matcher map empty when no maps have been added?"
+            "Is the match map correct?"
             Map.empty
-            (getMatchMap (newEpsilonMatcher 0 :: EpsilonMatcher Int))
+            $
+            runEpsilonMatcher (0 :: Int) $ do
+                return ()
     -- @-node:gcross.20100228202857.1305:null case
     -- @-others
     -- @-node:gcross.20100228202857.1304:<< Tests >>

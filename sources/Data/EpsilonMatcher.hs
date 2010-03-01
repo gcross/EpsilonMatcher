@@ -31,6 +31,9 @@ data EpsilonMatcher valueType = EpsilonMatcher
     ,   epsilonMatcherTolerance :: valueType
     }
 -- @-node:gcross.20100228202857.1295:EpsilonMatcher
+-- @+node:gcross.20100228202857.1309:EpsilonMatcherState
+type EpsilonMatcherState valueType resultType = State (EpsilonMatcher valueType) resultType
+-- @-node:gcross.20100228202857.1309:EpsilonMatcherState
 -- @-node:gcross.20100228202857.1294:Types
 -- @+node:gcross.20100228202857.1297:Functions
 -- @+node:gcross.20100228202857.1301:newEpsilonMatcher
@@ -80,9 +83,23 @@ match lookup_value matcher@(EpsilonMatcher match_tree next_index tolerance) =
 lookupMatch ::
     (Ord valueType, Num valueType) =>
     valueType ->
-    State (EpsilonMatcher valueType) Int
+    EpsilonMatcherState valueType Int
 lookupMatch = State . match
 -- @-node:gcross.20100228202857.1299:lookupMatch
+-- @+node:gcross.20100228202857.1308:runEpsilonMatcher
+runEpsilonMatcher ::
+    valueType ->
+    EpsilonMatcherState valueType ()
+    -> Map Int Int
+runEpsilonMatcher tolerance stateRunner =
+    getMatchMap
+    .
+    execState stateRunner
+    .
+    newEpsilonMatcher
+    $
+    tolerance
+-- @-node:gcross.20100228202857.1308:runEpsilonMatcher
 -- @-node:gcross.20100228202857.1297:Functions
 -- @-others
 -- @-node:gcross.20091208183517.1416:@thin EpsilonMatcher.hs
