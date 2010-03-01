@@ -10,8 +10,8 @@ import Control.Arrow
 import Control.Monad.State.Strict
 
 import qualified Data.COrdering as COrdering
-import Data.Map (Map)
-import qualified Data.Map as Map
+import Data.IntMap (IntMap)
+import qualified Data.IntMap as IntMap
 import Data.Tree.AVL (AVL)
 import qualified Data.Tree.AVL as AVL
 -- @-node:gcross.20100228202857.1293:<< Import needed modules >>
@@ -42,9 +42,9 @@ newEpsilonMatcher :: valueType -> EpsilonMatcher valueType
 newEpsilonMatcher tolerance = EpsilonMatcher AVL.empty 0 tolerance
 -- @-node:gcross.20100228202857.1301:newEpsilonMatcher
 -- @+node:gcross.20100228202857.1303:getMatchMap
-getMatchMap :: EpsilonMatcher valueType -> Map Int Int
+getMatchMap :: EpsilonMatcher valueType -> IntMap Int
 getMatchMap =
-    Map.fromList
+    IntMap.fromList
     .
     flip zip [0..]
     .
@@ -91,7 +91,7 @@ lookupMatch = State . match
 runEpsilonMatcher ::
     valueType ->
     EpsilonMatcherState valueType resultType
-    -> (resultType, Map Int Int)
+    -> (resultType, IntMap Int)
 runEpsilonMatcher tolerance stateRunner =
     second getMatchMap
     .

@@ -12,8 +12,7 @@
 import Control.Monad
 
 import Data.EpsilonMatcher
-import Data.Map (Map)
-import qualified Data.Map as Map
+import qualified Data.IntMap as IntMap
 
 import Test.Framework
 import Test.Framework.Providers.HUnit
@@ -45,14 +44,14 @@ main = defaultMain
         [testCase "null case" $
             assertEqual
                 "Is the match map correct?"
-                ((),Map.empty)
+                ((),IntMap.empty)
                 $
                 runEpsilonMatcher (0 :: Int) $ do
                     return ()
         -- @-node:gcross.20100228202857.1305:null case
         -- @+node:gcross.20100228202857.1315:singleton case
         ,testProperty "singleton case" $ \(value :: Int) ->
-            (0,Map.singleton 0 0)
+            (0,IntMap.singleton 0 0)
             ==
             (runEpsilonMatcher (0 :: Int) $ do
                 lookupMatch value
@@ -61,9 +60,9 @@ main = defaultMain
         -- @+node:gcross.20100301111615.1273:duo case
         ,testProperty "duo case" $ \(value1 :: Int) (value2 :: Int) ->
             (case value1 `compare` value2 of
-                LT -> (((0,1),Map.fromList [(0,0),(1,1)]) ==)
-                GT -> (((0,1),Map.fromList [(0,1),(1,0)]) ==)
-                EQ -> (((0,0),Map.fromList [(0,0)]) ==)
+                LT -> (((0,1),IntMap.fromList [(0,0),(1,1)]) ==)
+                GT -> (((0,1),IntMap.fromList [(0,1),(1,0)]) ==)
+                EQ -> (((0,0),IntMap.fromList [(0,0)]) ==)
             )
             $
             (runEpsilonMatcher (0 :: Int) $ do
@@ -75,19 +74,19 @@ main = defaultMain
         -- @+node:gcross.20100301111615.1277:trio case
         ,testProperty "trio case" $ \(value1 :: Int) (value2 :: Int) (value3 :: Int)->
             (case (value1 `compare` value2,value2 `compare` value3,value1 `compare` value3) of
-                (EQ,EQ,_) -> (((0,0,0),Map.fromList [(0,0)]) ==)
-                (LT,LT,_) -> (((0,1,2),Map.fromList [(0,0),(1,1),(2,2)]) ==)
-                (LT,EQ,_) -> (((0,1,1),Map.fromList [(0,0),(1,1)]) ==)
-                (EQ,LT,_) -> (((0,0,1),Map.fromList [(0,0),(1,1)]) ==)
-                (GT,GT,_) -> (((0,1,2),Map.fromList [(0,2),(1,1),(2,0)]) ==)
-                (GT,EQ,_) -> (((0,1,1),Map.fromList [(0,1),(1,0)]) ==)
-                (EQ,GT,_) -> (((0,0,1),Map.fromList [(0,1),(1,0)]) ==)
-                (GT,LT,EQ) -> (((0,1,0),Map.fromList [(0,1),(1,0)]) ==)
-                (GT,LT,LT) -> (((0,1,2),Map.fromList [(0,1),(1,0),(2,2)]) ==)
-                (GT,LT,GT) -> (((0,1,2),Map.fromList [(0,2),(1,0),(2,1)]) ==)
-                (LT,GT,EQ) -> (((0,1,0),Map.fromList [(0,0),(1,1)]) ==)
-                (LT,GT,LT) -> (((0,1,2),Map.fromList [(0,0),(1,2),(2,1)]) ==)
-                (LT,GT,GT) -> (((0,1,2),Map.fromList [(0,1),(1,2),(2,0)]) ==)
+                (EQ,EQ,_) -> (((0,0,0),IntMap.fromList [(0,0)]) ==)
+                (LT,LT,_) -> (((0,1,2),IntMap.fromList [(0,0),(1,1),(2,2)]) ==)
+                (LT,EQ,_) -> (((0,1,1),IntMap.fromList [(0,0),(1,1)]) ==)
+                (EQ,LT,_) -> (((0,0,1),IntMap.fromList [(0,0),(1,1)]) ==)
+                (GT,GT,_) -> (((0,1,2),IntMap.fromList [(0,2),(1,1),(2,0)]) ==)
+                (GT,EQ,_) -> (((0,1,1),IntMap.fromList [(0,1),(1,0)]) ==)
+                (EQ,GT,_) -> (((0,0,1),IntMap.fromList [(0,1),(1,0)]) ==)
+                (GT,LT,EQ) -> (((0,1,0),IntMap.fromList [(0,1),(1,0)]) ==)
+                (GT,LT,LT) -> (((0,1,2),IntMap.fromList [(0,1),(1,0),(2,2)]) ==)
+                (GT,LT,GT) -> (((0,1,2),IntMap.fromList [(0,2),(1,0),(2,1)]) ==)
+                (LT,GT,EQ) -> (((0,1,0),IntMap.fromList [(0,0),(1,1)]) ==)
+                (LT,GT,LT) -> (((0,1,2),IntMap.fromList [(0,0),(1,2),(2,1)]) ==)
+                (LT,GT,GT) -> (((0,1,2),IntMap.fromList [(0,1),(1,2),(2,0)]) ==)
             )
             (runEpsilonMatcher (0 :: Int) $ do
                 key1 <- lookupMatch value1
@@ -106,7 +105,7 @@ main = defaultMain
         [testCase "1" $
             assertEqual
                 "Is the result correct?"
-                ((0,1,0,1,2),Map.fromList [(0,1),(1,2),(2,0)])
+                ((0,1,0,1,2),IntMap.fromList [(0,1),(1,2),(2,0)])
                 (runEpsilonMatcher (0.1 :: Float) $
                     liftM5 (,,,,)
                         (lookupMatch 1.0)
@@ -120,7 +119,7 @@ main = defaultMain
         ,testCase "2" $
             assertEqual
                 "Is the result correct?"
-                ([0,1,1,2,0,3,4,5],Map.fromList [(3,0),(4,1),(1,2),(0,3),(2,4),(5,5)])
+                ([0,1,1,2,0,3,4,5],IntMap.fromList [(3,0),(4,1),(1,2),(0,3),(2,4),(5,5)])
                 (runEpsilonMatcher (0.1 :: Float) . sequence $
                     [lookupMatch 1.0
                     ,lookupMatch 0.5
