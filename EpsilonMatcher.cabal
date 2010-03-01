@@ -1,0 +1,16 @@
+-- @+leo-ver=4-thin
+-- @+node:gcross.20091208183517.1493:@thin EpsilonMatcher.cabal
+-- @@language Haskell
+Name:           EpsilonMatcher
+Version:        0.1
+Cabal-Version:  >= 1.6
+Build-Type:     Custom
+
+Library
+    Build-Depends:  base == 4.1.*,
+                    containers == 0.2.*,
+                    mtl == 1.1.*,
+                    COrdering == 2.3,
+                    AvlTree == 4.2
+-- @-node:gcross.20091208183517.1493:@thin EpsilonMatcher.cabal
+-- @-leo
