@@ -6,6 +6,7 @@ module Data.EpsilonMatcher where
 
 -- @<< Import needed modules >>
 -- @+node:gcross.20100228202857.1293:<< Import needed modules >>
+import Control.Arrow
 import Control.Monad.State.Strict
 
 import qualified Data.COrdering as COrdering
@@ -89,12 +90,12 @@ lookupMatch = State . match
 -- @+node:gcross.20100228202857.1308:runEpsilonMatcher
 runEpsilonMatcher ::
     valueType ->
-    EpsilonMatcherState valueType ()
-    -> Map Int Int
+    EpsilonMatcherState valueType resultType
+    -> (resultType, Map Int Int)
 runEpsilonMatcher tolerance stateRunner =
-    getMatchMap
+    second getMatchMap
     .
-    execState stateRunner
+    runState stateRunner
     .
     newEpsilonMatcher
     $

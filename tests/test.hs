@@ -25,7 +25,7 @@ main = defaultMain
     [testCase "null case" $
         assertEqual
             "Is the match map correct?"
-            Map.empty
+            ((),Map.empty)
             $
             runEpsilonMatcher (0 :: Int) $ do
                 return ()
