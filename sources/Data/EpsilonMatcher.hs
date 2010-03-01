@@ -72,7 +72,7 @@ match lookup_value matcher@(EpsilonMatcher match_tree next_index tolerance) =
             )
   where
     comparer match@(Match match_value match_key) =
-        if abs (lookup_value-match_value) < tolerance
+        if abs (lookup_value-match_value) <= tolerance
             then COrdering.Eq match_key
             else comparer2 match
     comparer2 (Match match_value _) =
