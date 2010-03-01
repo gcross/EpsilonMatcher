@@ -90,8 +90,8 @@ lookupMatch = State . match
 -- @+node:gcross.20100228202857.1308:runEpsilonMatcher
 runEpsilonMatcher ::
     valueType ->
-    EpsilonMatcherState valueType resultType
-    -> (resultType, IntMap Int)
+    EpsilonMatcherState valueType resultType ->
+    (resultType, IntMap Int)
 runEpsilonMatcher tolerance stateRunner =
     second getMatchMap
     .
