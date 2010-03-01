@@ -157,6 +157,17 @@ main = defaultMain
                     runMultipleEpsilonMatchers (replicate 3 0 :: [Int]) $ do
                         return ()
             -- @-node:gcross.20100301111615.1305:null case
+            -- @+node:gcross.20100301111615.1310:singleton case
+            ,testProperty "singleton case" $ \(value1 :: Int) (value2 :: Int) (value3 :: Int) ->
+                ([0,0,0],replicate 3 (IntMap.singleton 0 0))
+                ==
+                (runMultipleEpsilonMatchers (replicate 3 0 :: [Int]) . sequence $
+                    [lookupMatchIn 0 value1
+                    ,lookupMatchIn 1 value2
+                    ,lookupMatchIn 2 value3
+                    ]
+                )
+            -- @-node:gcross.20100301111615.1310:singleton case
             -- @-others
             ]
         -- @-node:gcross.20100301111615.1304:Simple integer cases
