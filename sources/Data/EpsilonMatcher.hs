@@ -25,6 +25,10 @@ data Match valueType = Match
     ,   matchKey :: Int
     }
 -- @-node:gcross.20100228202857.1296:Match
+-- @+node:gcross.20100310123433.1415:MatchMap
+type MatchMap = IntMap Int
+-- @nonl
+-- @-node:gcross.20100310123433.1415:MatchMap
 -- @+node:gcross.20100228202857.1295:EpsilonMatcher
 data EpsilonMatcher valueType = EpsilonMatcher
     {   epsilonMatcherTree :: AVL (Match valueType)
@@ -37,13 +41,14 @@ type EpsilonMatcherState valueType resultType = State (EpsilonMatcher valueType)
 -- @-node:gcross.20100228202857.1309:EpsilonMatcherState
 -- @-node:gcross.20100228202857.1294:Types
 -- @+node:gcross.20100228202857.1297:Functions
+-- @+node:gcross.20100310123433.1416:Pure
 -- @+node:gcross.20100228202857.1301:newEpsilonMatcher
 newEpsilonMatcher :: valueType -> EpsilonMatcher valueType
 newEpsilonMatcher tolerance = EpsilonMatcher AVL.empty 0 tolerance
 -- @-node:gcross.20100228202857.1301:newEpsilonMatcher
--- @+node:gcross.20100228202857.1303:getMatchMap
-getMatchMap :: EpsilonMatcher valueType -> IntMap Int
-getMatchMap =
+-- @+node:gcross.20100228202857.1303:computeMatchMap
+computeMatchMap :: EpsilonMatcher valueType -> MatchMap
+computeMatchMap =
     IntMap.fromList
     .
     flip zip [0..]
@@ -53,7 +58,7 @@ getMatchMap =
     AVL.asListL
     .
     epsilonMatcherTree
--- @-node:gcross.20100228202857.1303:getMatchMap
+-- @-node:gcross.20100228202857.1303:computeMatchMap
 -- @+node:gcross.20100228202857.1298:match
 match ::
     (Ord valueType, Num valueType) =>
@@ -80,6 +85,12 @@ match lookup_value matcher@(EpsilonMatcher match_tree next_index tolerance) =
             then COrdering.Lt
             else COrdering.Gt
 -- @-node:gcross.20100228202857.1298:match
+-- @-node:gcross.20100310123433.1416:Pure
+-- @+node:gcross.20100310123433.1417:Monadic
+-- @+node:gcross.20100310123433.1414:getMatchMap
+getMatchMap :: EpsilonMatcherState valueType MatchMap
+getMatchMap = fmap computeMatchMap get
+-- @-node:gcross.20100310123433.1414:getMatchMap
 -- @+node:gcross.20100228202857.1299:lookupMatch
 lookupMatch ::
     (Ord valueType, Num valueType) =>
@@ -91,9 +102,9 @@ lookupMatch = State . match
 runEpsilonMatcher ::
     valueType ->
     EpsilonMatcherState valueType resultType ->
-    (resultType, IntMap Int)
+    (resultType, MatchMap)
 runEpsilonMatcher tolerance stateRunner =
-    second getMatchMap
+    second computeMatchMap
     .
     runState stateRunner
     .
@@ -101,6 +112,7 @@ runEpsilonMatcher tolerance stateRunner =
     $
     tolerance
 -- @-node:gcross.20100228202857.1308:runEpsilonMatcher
+-- @-node:gcross.20100310123433.1417:Monadic
 -- @-node:gcross.20100228202857.1297:Functions
 -- @-others
 -- @-node:gcross.20091208183517.1416:@thin EpsilonMatcher.hs

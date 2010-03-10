@@ -23,6 +23,7 @@ type MultipleEpsilonMatcherState valueType resultType = State (IntMap (EpsilonMa
 -- @-node:gcross.20100301111615.1289:MultipleEpsilonMatcherState
 -- @-node:gcross.20100301111615.1287:Types
 -- @+node:gcross.20100301111615.1290:Functions
+-- @+node:gcross.20100310123433.1418:Pure
 -- @+node:gcross.20100301111615.1294:matchIn
 matchIn ::
     (Ord valueType, Num valueType) =>
@@ -35,6 +36,12 @@ matchIn matcher_index lookup_value matchers =
         (match_key,new_matcher) = match lookup_value old_matcher
     in (match_key,IntMap.insert matcher_index new_matcher matchers)
 -- @-node:gcross.20100301111615.1294:matchIn
+-- @-node:gcross.20100310123433.1418:Pure
+-- @+node:gcross.20100310123433.1419:Monadic
+-- @+node:gcross.20100310123433.1420:getMatchMaps
+getMatchMaps :: MultipleEpsilonMatcherState valueType [MatchMap]
+getMatchMaps = fmap (map computeMatchMap . IntMap.elems) get
+-- @-node:gcross.20100310123433.1420:getMatchMaps
 -- @+node:gcross.20100301111615.1292:lookupMatchIn
 lookupMatchIn ::
     (Ord valueType, Num valueType) =>
@@ -47,9 +54,9 @@ lookupMatchIn matcher_index = State . matchIn matcher_index
 runMultipleEpsilonMatchers ::
     [valueType] ->
     MultipleEpsilonMatcherState valueType resultType ->
-    (resultType,[IntMap Int])
+    (resultType,[MatchMap])
 runMultipleEpsilonMatchers tolerances stateRunner =
-    second (map (getMatchMap . snd) . IntMap.toAscList)
+    second (map computeMatchMap . IntMap.elems)
     .
     runState stateRunner
     .
@@ -61,6 +68,7 @@ runMultipleEpsilonMatchers tolerances stateRunner =
     $
     tolerances
 -- @-node:gcross.20100301111615.1296:runEpsilonMatcher
+-- @-node:gcross.20100310123433.1419:Monadic
 -- @-node:gcross.20100301111615.1290:Functions
 -- @-others
 -- @-node:gcross.20100301111615.1284:@thin EpsilonMatcher/Multiple.hs
