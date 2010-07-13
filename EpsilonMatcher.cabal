@@ -8,8 +8,8 @@ Build-Type:     Custom
 
 Library
     Build-Depends:  Blueprint == 0.2,
-                    base == 4.1.*,
-                    containers == 0.2.*,
+                    base >= 4.1 && < 5,
+                    containers >= 0.2 && < 0.4,
                     mtl == 1.1.*,
                     COrdering == 2.3,
                     AvlTree == 4.2
